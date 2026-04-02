@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import ProjectGallery from "@/components/ProjectGallery";
 import { useData } from "@/lib/DataProvider";
 
 export default function ProjectClient() {
@@ -72,24 +72,7 @@ export default function ProjectClient() {
             </p>
           </div>
 
-          <div className="space-y-3">
-            {project.images.map((img, i) => (
-              <div
-                key={i}
-                className="relative w-full aspect-[16/10] bg-neutral-100 overflow-hidden"
-              >
-                <Image
-                  src={img}
-                  alt={`${project.title} — Image ${i + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1280px) 100vw, 1280px"
-                  priority={i === 0}
-                  unoptimized
-                />
-              </div>
-            ))}
-          </div>
+          <ProjectGallery images={project.images} title={project.title} />
         </div>
       </main>
       <Footer config={config} />

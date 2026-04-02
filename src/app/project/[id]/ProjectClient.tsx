@@ -10,8 +10,21 @@ import { useData } from "@/lib/DataProvider";
 export default function ProjectClient() {
   const params = useParams();
   const id = params.id as string;
-  const { projects, config } = useData();
+  const { projects, config, loading } = useData();
   const project = projects.find((p) => p.id === id);
+
+  if (!project && loading) {
+    return (
+      <>
+        <Navigation siteName={config.name} />
+        <main className="pt-16">
+          <div className="max-w-7xl mx-auto px-6 py-32 text-center">
+            <div className="w-5 h-5 border border-neutral-300 border-t-neutral-900 rounded-full animate-spin mx-auto" />
+          </div>
+        </main>
+      </>
+    );
+  }
 
   if (!project) {
     return (

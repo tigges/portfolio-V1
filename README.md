@@ -51,10 +51,31 @@ The site works immediately with built-in demo projects. To connect your own cont
 
 ## Using Google Drive Images
 
-For images stored in Google Drive:
+### Automated: Google Drive → Sheet → Site (recommended)
+
+Set up automatic syncing so you just drop images into Drive folders and the site updates:
+
+1. Create a **"Portfolio"** folder in Google Drive
+2. Add project subfolders with images (and optional `info.txt` files)
+3. Install the Google Apps Script from `google-apps-script/sync-portfolio.gs`
+4. Set a 5-minute auto-sync trigger
+
+**→ Full setup guide: [docs/GOOGLE_DRIVE_SETUP.md](docs/GOOGLE_DRIVE_SETUP.md)**
+
+```
+📁 Google Drive "Portfolio/"       →  📊 Google Sheet (auto-populated)  →  🌐 Live Site
+├── 📁 My Project/                     id | title | thumbnail | ...        (fetches on load)
+│   ├── 🖼 hero.jpg
+│   ├── 🖼 detail.jpg
+│   └── 📄 info.txt
+```
+
+### Manual: Direct image URLs
+
+For images stored in Google Drive without automation:
 1. Upload images to a Google Drive folder
 2. Right-click → Share → "Anyone with the link"
-3. Use the share URL as the `thumbnail` or `images` value
+3. Use `https://drive.google.com/thumbnail?id=FILE_ID&sz=w1200` as the image URL in the sheet
 
 ## Deployment on Cloudways
 

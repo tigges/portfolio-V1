@@ -1,81 +1,16 @@
 import { Project, SiteConfig } from "./types";
 
-const SHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID;
-const PROJECTS_TAB = process.env.NEXT_PUBLIC_PROJECTS_TAB || "Projects";
-const CONFIG_TAB = process.env.NEXT_PUBLIC_CONFIG_TAB || "Config";
-
-async function fetchSheet<T>(tab: string): Promise<T[]> {
-  if (!SHEET_ID) return [];
-  const url = `https://opensheet.elk.sh/${SHEET_ID}/${encodeURIComponent(tab)}`;
-  const res = await fetch(url, { next: { revalidate: 60 } });
-  if (!res.ok) return [];
-  return res.json();
-}
-
-interface RawProject {
-  id?: string;
-  title?: string;
-  category?: string;
-  year?: string;
-  description?: string;
-  thumbnail?: string;
-  images?: string;
-  featured?: string;
-}
-
-function parseProject(raw: RawProject, index: number): Project {
+export function getDefaultConfig(): SiteConfig {
   return {
-    id: raw.id || `project-${index}`,
-    title: raw.title || "Untitled",
-    category: raw.category || "Other",
-    year: raw.year || new Date().getFullYear().toString(),
-    description: raw.description || "",
-    thumbnail: raw.thumbnail || "/images/placeholder.svg",
-    images: raw.images
-      ? raw.images.split(",").map((s: string) => s.trim())
-      : [raw.thumbnail || "/images/placeholder.svg"],
-    featured: raw.featured?.toLowerCase() === "true" || raw.featured === "1",
+    name: "Portfolio",
+    tagline: "Art / Architecture / Design",
+    email: "hello@example.com",
+    instagram: "",
+    linkedin: "",
   };
 }
 
-export async function getProjects(): Promise<Project[]> {
-  const raw = await fetchSheet<RawProject>(PROJECTS_TAB);
-  if (raw.length > 0) return raw.map(parseProject);
-  return getFallbackProjects();
-}
-
-export async function getFeaturedProjects(): Promise<Project[]> {
-  const all = await getProjects();
-  const featured = all.filter((p) => p.featured);
-  return featured.length > 0 ? featured : all.slice(0, 5);
-}
-
-export async function getProject(id: string): Promise<Project | undefined> {
-  const all = await getProjects();
-  return all.find((p) => p.id === id);
-}
-
-interface RawConfig {
-  key?: string;
-  value?: string;
-}
-
-export async function getSiteConfig(): Promise<SiteConfig> {
-  const raw = await fetchSheet<RawConfig>(CONFIG_TAB);
-  const map: Record<string, string> = {};
-  raw.forEach((row) => {
-    if (row.key && row.value) map[row.key] = row.value;
-  });
-  return {
-    name: map.name || "Portfolio",
-    tagline: map.tagline || "Art / Architecture / Design",
-    email: map.email || "hello@example.com",
-    instagram: map.instagram || "",
-    linkedin: map.linkedin || "",
-  };
-}
-
-function getFallbackProjects(): Project[] {
+export function getFallbackProjects(): Project[] {
   return [
     {
       id: "concrete-horizon",

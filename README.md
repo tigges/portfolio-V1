@@ -4,7 +4,7 @@ A minimal, image-first portfolio for art, architecture, and product design — p
 
 ## How It Works
 
-1. **Google Sheets as CMS** — Add projects to a published Google Sheet. The site auto-updates every 60 seconds.
+1. **Google Sheets as CMS** — Add projects to a published Google Sheet. The site fetches data client-side on every page load — instant updates, no rebuild needed.
 2. **Hero Carousel** — Featured projects rotate in a full-bleed carousel.
 3. **Project Grid** — All work displayed in a clean grid with hover effects.
 4. **Archive** — Filterable, switchable grid/list view of every project.
@@ -58,14 +58,36 @@ For images stored in Google Drive:
 
 ## Deployment on Cloudways
 
-Build the production version:
+The site builds as a **static export** (`out/` folder) — no Node.js server required on Cloudways.
+
+### Manual Deploy
 
 ```bash
 npm run build
-npm start
+# Upload the contents of the `out/` folder to your Cloudways public_html via SFTP
 ```
 
-Or deploy as a static export by adding `output: 'export'` to `next.config.ts`.
+### Automated Deploy (GitHub Actions)
+
+A GitHub Actions workflow (`.github/workflows/deploy.yml`) auto-deploys on push to `main`. Add these secrets to your GitHub repo:
+
+| Secret | Value |
+|--------|-------|
+| `CLOUDWAYS_SSH_HOST` | Your server IP (from Cloudways → Server → Master Credentials) |
+| `CLOUDWAYS_SSH_USER` | SSH username |
+| `CLOUDWAYS_SSH_KEY` | Private SSH key (generate in Cloudways → SSH Keys) |
+| `CLOUDWAYS_APP_PATH` | Application path, e.g. `/home/master/applications/abc123` |
+
+### .htaccess for Clean URLs
+
+Add this to `public_html/.htaccess` on Cloudways:
+
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /$1.html [L]
+```
 
 ## Tech Stack
 

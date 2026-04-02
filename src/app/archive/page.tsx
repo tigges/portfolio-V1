@@ -1,19 +1,12 @@
+"use client";
+
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { getProjects, getSiteConfig } from "@/lib/data";
 import ArchiveClient from "./ArchiveClient";
+import { useData } from "@/lib/DataProvider";
 
-export const revalidate = 60;
-
-export const metadata = {
-  title: "Archive — Portfolio",
-};
-
-export default async function ArchivePage() {
-  const [projects, config] = await Promise.all([
-    getProjects(),
-    getSiteConfig(),
-  ]);
+export default function ArchivePage() {
+  const { projects, config } = useData();
 
   return (
     <>
